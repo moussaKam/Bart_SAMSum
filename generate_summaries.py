@@ -1,16 +1,21 @@
 import torch
 from fairseq.models.bart import BARTModel
 import argparse
+import os 
 
 parser = argparse.ArgumentParser() 
 parser.add_argument('--checkpoint', type=str, help='checkpoint to generate summaries')
 parser.add_argument('--summaries_file', type=str, help='file to save generated summaries')
 parser.add_argument('--test_source', type=str, help='test dialogues')
-parser.parse_args()
+args = parser.parse_args()
+
+sep = os.path.sep
+checkpoint_path = args.checkpoint[:args.checkpoint.rfind(sep)]
+checkpoint = args.checkpoint[args.checkpoint.rfind(sep)+1:]
 
 bart = BARTModel.from_pretrained(
-    'checkpoints',
-    checkpoint_file=args.checkpoint,
+    checkpoint_path,
+    checkpoint_file=checkpoint,
 )
 
 bart.cuda()

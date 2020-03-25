@@ -1,5 +1,8 @@
 
-* Download SAMSum dialogue from [here](https://arxiv.org/abs/1911.12237)
+* Download SAMSum dialogue from [here](https://arxiv.org/abs/1911.12237) or execute:
+```
+curl https://arxiv.org/src/1911.12237v2/anc/corpus.7z --output samsum.7z
+```
 * Uncompress corpus.7z
 * Download fairseq toolkit: 
 ```
@@ -7,16 +10,15 @@ git clone https://github.com/pytorch/fairseq.git
 ```
 * Add fairseq to python path:
 ```
-
+export PYTHONPATH="${PYTHONPATH}:/FAIRSEQ_PATH
 ```
-export PYTHONPATH="${PYTHONPATH}:/FAIRSEQ_PATH"
 * Create a directory to save prepared data:
 ```
 mkdir PATH_TO_FAIRSEQ/examples/bart/samsum
 ```
-* Run preprpare_data.py:
+* Run prepare_data.py:
 ```
-python preprocess_data.py --path_samsum PATH_TO_SAMSUM --path_samsum_bart PATH_SAMSUM_IN_BART
+python prepare_data.py --path_samsum PATH_TO_SAMSUM --path_samsum_bart PATH_SAMSUM_IN_BART
 ```
 where PATH_TO_SAMSUM is the directory containig SAMSum dataset and PATH_SAMSUM_IN_BARTis the created directory in the previous step.
 
@@ -32,7 +34,7 @@ wget -N 'https://dl.fbaipublicfiles.com/fairseq/gpt2_bpe/dict.txt'
 
 TASK=samsum
 for SPLIT in train val
-dols
+do
   for LANG in source target
   do
     python -m examples.roberta.multiprocessing_bpe_encoder \
@@ -53,7 +55,7 @@ python -m preprocess \
   --trainpref "${TASK}/train.bpe" \
   --validpref "${TASK}/val.bpe" \
   --destdir "${TASK}-bin/" \
-  --workers 60 \
+  --workers 1 \
   --srcdict dict.txt \
   --tgtdict dict.txt;
 ```
@@ -97,10 +99,13 @@ time python -m train samsum-bin \
     --skip-invalid-size-inputs-valid-test \
     --find-unused-parameters \
     --batch-size 1 \
-    --save-dir checkpoints \
+    --save-dir samsum-bin \
     --memory-efficient-fp16 \
     --max-epoch 1
     --disable-validation \
 ```
 
 * Generate summaries from a checkpoint by running generate_summaries.py
+```
+python generate_summaries.py --checkpoint PATH_TO_CHECKPOINT --test_source PATH_TO_TEST_SOURCE --summaries_file PATH_TO_OUTPUT
+```
