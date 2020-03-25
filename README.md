@@ -3,7 +3,7 @@
 ```
 curl https://arxiv.org/src/1911.12237v2/anc/corpus.7z --output samsum.7z
 ```
-* Uncompress corpus.7z
+* Uncompress samsum.7z
 * Download fairseq toolkit: 
 ```
 git clone https://github.com/pytorch/fairseq.git
@@ -101,7 +101,7 @@ time python -m train samsum-bin \
     --batch-size 1 \
     --save-dir samsum-bin \
     --memory-efficient-fp16 \
-    --max-epoch 1
+    --max-epoch 3 \
     --disable-validation \
 ```
 
